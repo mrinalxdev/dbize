@@ -110,12 +110,12 @@ export const SchemaEditor = () => {
             gap={20}
             size={1}
           />
-          <MiniMap
+          {/* <MiniMap
             nodeStrokeWidth={3}
             zoomable
             pannable
             className="!bg-white dark:!bg-zinc-800 !shadow-md !rounded-md !border-zinc-200 dark:!border-zinc-700"
-          />
+          /> */}
           <Controls
             className="!bg-white dark:!bg-zinc-800 !shadow-md !rounded-md !border-zinc-200 dark:!border-zinc-700"
             showInteractive={false}

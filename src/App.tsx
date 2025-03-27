@@ -6,6 +6,7 @@ import { GuideContent } from "./components/GuideContent";
 import { useTheme } from "./hooks/useTheme";
 import { Button } from "./components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { useEffect } from "react";
 
 // If you are reading this comment Thanks for checking out my codebase
 // In the era seeing code bases of vibe coders I really missed the messages
@@ -20,25 +21,26 @@ function ThemeToggle(){
                 <Sun className="h-4 w-4" />
             ) : (
                 <Moon className="h-4 w-4" />
-            )}
+            )} <span className="sr-only">Toggle Theme</span>
         </Button>
     )
 }
 
 function App() {
+const {theme} = useTheme()
 
-    const {theme} = useTheme()
   return (
     <div className={`flex h-screen flex-col bg-zinc-50 dark:bg-zinc-900 ${theme}`}>
       <header className="border-b bg-white px-6 py-3 shadow-sm dark:bg-zinc-800">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">DBize</h1>
           <div className="flex items-center space-x-2">
+            <ThemeToggle />
             <a
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300"
+              className="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-200 dark:hover:text-zinc-300"
             >
               GitHub
             </a>
