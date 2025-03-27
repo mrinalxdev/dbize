@@ -3,10 +3,33 @@ import { SchemaEditor } from "./components/SchemaEditor";
 import { SqlPreview } from "./components/SqlPreview";
 import { Toaster } from "./components/ui/toaster";
 import { GuideContent } from "./components/GuideContent";
+import { useTheme } from "./hooks/useTheme";
+import { Button } from "./components/ui/button";
+import { Moon, Sun } from "lucide-react";
+
+// If you are reading this comment Thanks for checking out my codebase
+// In the era seeing code bases of vibe coders I really missed the messages
+// which senior developers used to leave for other devs :)
+
+function ThemeToggle(){
+    const {theme, toggleTheme} = useTheme()
+
+    return (
+        <Button variant="ghost" size="icon" onClick={toggleTheme}>
+            {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+            ) : (
+                <Moon className="h-4 w-4" />
+            )}
+        </Button>
+    )
+}
 
 function App() {
+
+    const {theme} = useTheme()
   return (
-    <div className="flex h-screen flex-col bg-zinc-50 dark:bg-zinc-900">
+    <div className={`flex h-screen flex-col bg-zinc-50 dark:bg-zinc-900 ${theme}`}>
       <header className="border-b bg-white px-6 py-3 shadow-sm dark:bg-zinc-800">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">DBize</h1>

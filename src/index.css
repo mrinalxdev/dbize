@@ -5,6 +5,13 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+.react-flow__edge-path {
+  stroke: #374151; /* Default color for light mode */
+}
+
+.dark .react-flow__edge-path {
+  stroke: #4ade80 !important; /* Green color for edges in dark mode */
+}
 
 @layer base {
   :root {
