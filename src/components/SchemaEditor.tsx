@@ -21,6 +21,7 @@ import { TableNode as TableNodeComponent } from './TableNode';
 import { AddTableDialog } from './AddTableDialog';
 import { Button } from './ui/button';
 import { Download, ZoomIn, ZoomOut, Maximize2, Move } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 const nodeTypes: NodeTypes = {
   tableNode: TableNodeComponent,
@@ -32,6 +33,7 @@ interface ExtendedReactFlowInstance extends ReactFlowInstance {
 }
 
 export const SchemaEditor = () => {
+    const {theme} = useTheme();
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const {
     nodes,
@@ -98,7 +100,7 @@ export const SchemaEditor = () => {
           defaultEdgeOptions={{
             type: 'smoothstep',
             animated: true,
-            style: { stroke: '#374151' },
+            style: {stroke : theme === "dark" ? "#4ade80" : "#374151"},
           }}
           proOptions={{ hideAttribution: true }}
           className="bg-zinc-50 dark:bg-zinc-900"
