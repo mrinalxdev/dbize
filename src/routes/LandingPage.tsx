@@ -168,7 +168,7 @@ function ImagePlaceholder() {
 
         {/* Placeholder image */}
         <img
-          src="../src/assets/banner.png"
+          src="/assets/banner.png"
           alt="Dashboard Preview"
           className="object-fit h-full w-full rounded-xl border-l-4 border-r-4 border-t-4 border-gray-400"
         />

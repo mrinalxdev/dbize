@@ -52,6 +52,10 @@ export interface SchemaState {
   getTableById: (id: string) => TableNode | undefined;
 }
 
+const loadLocalStorage = () => {
+    
+}
+
 export const useSchemaStore = create<SchemaState>((set, get) => ({
   nodes: [],
   edges: [],
