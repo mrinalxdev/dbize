@@ -64,6 +64,8 @@ export default function AntiMetal() {
           <ImagePlaceholder />
         </div>
       </motion.section>
+
+      <div className="mt-8 text-center pb-6">Built from 💗 by Mrinal</div>
     </div>
   );
 }
