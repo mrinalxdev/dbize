@@ -43,8 +43,8 @@ const Navbar = () => {
           <Link to="/guide" className="text-sm font-medium text-gray-300 hover:text-white">
             Docs
           </Link>
-          <Link to="/faq" className="text-sm font-medium text-gray-300 hover:text-white">
-            FAQ's
+          <Link to="https://x.com/Hi_Mrinal" className="text-sm font-medium text-gray-300 hover:text-white">
+            Contact
           </Link>
         </nav>
         <div className="-ml-6 flex">

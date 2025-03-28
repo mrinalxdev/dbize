@@ -59,6 +59,7 @@ export interface SchemaState {
   removeColumn: (tableId: string, columnId: string) => void;
   removeTable: (id: string) => void;
   getTableById: (id: string) => TableNode | undefined;
+  resetSchema : () => void;
 }
 
 const loadLocalStorage = () => {
