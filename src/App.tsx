@@ -7,6 +7,7 @@ import { useTheme } from "./hooks/useTheme";
 import { Button } from "./components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useEffect } from "react";
+import { ScrollArea } from "./components/ui/scroll-area";
 
 // If you are reading this comment Thanks for checking out my codebase
 // In the era seeing code bases of vibe coders I really missed the messages
@@ -37,12 +38,12 @@ const {theme} = useTheme()
           <div className="flex items-center space-x-2">
             <ThemeToggle />
             <a
-              href="https://github.com"
+              href="https://github.com/mrinalxdev/dbize"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-zinc-500 hover:text-zinc-800 dark:text-zinc-200 dark:hover:text-zinc-300"
             >
-              GitHub
+              Give it a Star
             </a>
           </div>
         </div>
@@ -71,9 +72,9 @@ const {theme} = useTheme()
             <SchemaEditor />
           </div>
 
-          <div className="h-full w-84 overflow-auto border-l bg-white shadow-md dark:bg-zinc-800">
+          <ScrollArea className="h-[89.5vh] min-w-84 max-w-86 overflow-auto border-l bg-white shadow-md dark:bg-zinc-800">
             <SqlPreview />
-          </div>
+          </ScrollArea>
         </TabsContent>
 
         <TabsContent value="guide" className="mt-0 flex-1 overflow-auto p-6">
