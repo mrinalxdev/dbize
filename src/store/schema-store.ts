@@ -1,18 +1,27 @@
-import { create } from 'zustand';
-import { Edge, Node, Connection, addEdge, applyNodeChanges, applyEdgeChanges, NodeChange, EdgeChange } from 'reactflow';
+import { create } from "zustand";
+import {
+  Edge,
+  Node,
+  Connection,
+  addEdge,
+  applyNodeChanges,
+  applyEdgeChanges,
+  NodeChange,
+  EdgeChange,
+} from "reactflow";
 
 export type ColumnType =
-  | 'varchar'
-  | 'text'
-  | 'integer'
-  | 'float'
-  | 'boolean'
-  | 'date'
-  | 'datetime'
-  | 'time'
-  | 'uuid'
-  | 'json'
-  | 'bigint';
+  | "varchar"
+  | "text"
+  | "integer"
+  | "float"
+  | "boolean"
+  | "date"
+  | "datetime"
+  | "time"
+  | "uuid"
+  | "json"
+  | "bigint";
 
 export interface Column {
   id: string;
@@ -32,7 +41,7 @@ export interface TableData {
 
 export interface TableNode extends Node {
   data: TableData;
-  type?: 'tableNode';
+  type?: "tableNode";
 }
 
 export interface SchemaState {
@@ -53,137 +62,201 @@ export interface SchemaState {
 }
 
 const loadLocalStorage = () => {
-    
-}
+  try {
+    const savedData = localStorage.getItem("dbize-schema");
+    return savedData ? JSON.parse(savedData) : { nodes: [], edges: [] };
+  } catch {
+    return { nodes: [], edges: [] };
+  }
+};
 
-export const useSchemaStore = create<SchemaState>((set, get) => ({
-  nodes: [],
-  edges: [],
-  setNodes: (nodes) => set({ nodes }),
-  setEdges: (edges) => set({ edges }),
-
-  onNodesChange: (changes) => {
-    set({
-      nodes: applyNodeChanges(changes, get().nodes) as TableNode[],
-    });
-  },
-
-  onEdgesChange: (changes) => {
-    set({
-      edges: applyEdgeChanges(changes, get().edges),
-    });
-  },
-
-  onConnect: (connection) => {
-    set({
-      edges: addEdge(
-        {
-          ...connection,
-          type: 'smoothstep',
-          animated: true,
-          label: 'relates to',
-          style: { stroke: '#374151' }
-        },
-        get().edges
-      ),
-    });
-  },
-
-  addTable: (table) => {
-    const newNode: TableNode = {
-      id: `table-${Date.now()}`,
-      type: 'tableNode',
-      position: { x: 250, y: 250 },
-      data: table,
-    };
-
-    set({ nodes: [...get().nodes, newNode] });
-  },
-
-  updateTable: (id, data) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === id) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              ...data,
-            },
-          };
-        }
-        return node;
+const saveToLocalStorage = (state: { nodes: Node[]; edges: Edge[] }) => {
+  try {
+    localStorage.setItem(
+      "dbize-schema",
+      JSON.stringify({
+        nodes: state.nodes,
+        edges: state.edges,
       }),
-    });
-  },
+    );
+  } catch (error) {
+    console.error("Failed to save to localStorage : ", error);
+  }
+};
 
-  addColumn: (tableId, column) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === tableId) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              columns: [...node.data.columns, column],
-            },
-          };
-        }
-        return node;
-      }),
+export const useSchemaStore = create<SchemaState>((set, get) => {
+  const initialState = loadLocalStorage();
+  const saveCurrentState = () => {
+    saveToLocalStorage({
+      nodes: get().nodes,
+      edges: get().edges,
     });
-  },
+  };
 
-  updateColumn: (tableId, columnId, data) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === tableId) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              columns: node.data.columns.map((column) => {
-                if (column.id === columnId) {
-                  return {
-                    ...column,
-                    ...data,
-                  };
-                }
-                return column;
-              }),
-            },
-          };
-        }
-        return node;
-      }),
-    });
-  },
+  return {
+    nodes: initialState.nodes,
+    edges: initialState.edges,
 
-  removeColumn: (tableId, columnId) => {
-    set({
-      nodes: get().nodes.map((node) => {
-        if (node.id === tableId) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              columns: node.data.columns.filter((column) => column.id !== columnId),
-            },
-          };
-        }
-        return node;
-      }),
-    });
-  },
+    setNodes: (nodes) => {
+      set({ nodes });
+      saveToLocalStorage({ nodes, edges: get().edges });
+    },
 
-  removeTable: (id) => {
-    set({
-      nodes: get().nodes.filter((node) => node.id !== id),
-      edges: get().edges.filter((edge) => edge.source !== id && edge.target !== id),
-    });
-  },
+    setEdges: (edges) => {
+      set({ edges });
+      saveToLocalStorage({ nodes: get().nodes, edges });
+    },
 
-  getTableById: (id) => {
-    return get().nodes.find((node) => node.id === id);
-  },
-}));
+    onNodesChange: (changes) => {
+      set((state) => {
+        const newNodes = applyNodeChanges(changes, state.nodes) as TableNode[];
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    onEdgesChange: (changes) => {
+      set((state) => {
+        const newEdges = applyEdgeChanges(changes, state.edges);
+        saveToLocalStorage({ nodes: state.nodes, edges: newEdges });
+        return { edges: newEdges };
+      });
+    },
+
+    onConnect: (connection) => {
+      set((state) => {
+        const newEdges = addEdge(
+          {
+            ...connection,
+            type: "smoothstep",
+            animated: true,
+            style: { stroke: "#374151" },
+          },
+          state.edges,
+        );
+        saveToLocalStorage({ nodes: state.nodes, edges: newEdges });
+        return { edges: newEdges };
+      });
+    },
+
+    addTable: (table) => {
+      set((state) => {
+        const newNode: TableNode = {
+          id: `table-${Date.now()}`,
+          type: "tableNode",
+          position: { x: 250, y: 250 },
+          data: table,
+        };
+        const newNodes = [...state.nodes, newNode];
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    updateTable: (id, data) => {
+      set((state) => {
+        const newNodes = state.nodes.map((node) => {
+          if (node.id === id) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                ...data,
+              },
+            };
+          }
+          return node;
+        });
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    addColumn: (tableId, column) => {
+      set((state) => {
+        const newNodes = state.nodes.map((node) => {
+          if (node.id === tableId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                columns: [...node.data.columns, column],
+              },
+            };
+          }
+          return node;
+        });
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    updateColumn: (tableId, columnId, data) => {
+      set((state) => {
+        const newNodes = state.nodes.map((node) => {
+          if (node.id === tableId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                columns: node.data.columns.map((column) => {
+                  if (column.id === columnId) {
+                    return {
+                      ...column,
+                      ...data,
+                    };
+                  }
+                  return column;
+                }),
+              },
+            };
+          }
+          return node;
+        });
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    removeColumn: (tableId, columnId) => {
+      set((state) => {
+        const newNodes = state.nodes.map((node) => {
+          if (node.id === tableId) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                columns: node.data.columns.filter((column) => column.id !== columnId),
+              },
+            };
+          }
+          return node;
+        });
+        saveToLocalStorage({ nodes: newNodes, edges: state.edges });
+        return { nodes: newNodes };
+      });
+    },
+
+    removeTable: (id) => {
+      set((state) => {
+        const newNodes = state.nodes.filter((node) => node.id !== id);
+        const newEdges = state.edges.filter((edge) => edge.source !== id && edge.target !== id);
+        saveToLocalStorage({ nodes: newNodes, edges: newEdges });
+        return { nodes: newNodes, edges: newEdges };
+      });
+    },
+
+    getTableById: (id) => {
+      return get().nodes.find((node) => node.id === id);
+    },
+
+    resetSchema: () => {
+      if (
+        window.confirm("Are you sure you want to reset your entire schema? This cannot be undone.")
+      ) {
+        set({ nodes: [], edges: [] });
+        localStorage.removeItem("dbize-schema");
+      }
+    },
+  };
+});
