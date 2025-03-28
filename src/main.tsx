@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import App from "./App.tsx";
 import LandingPage from "./routes/LandingPage.tsx";
+import GuidePage from "./routes/GuidePage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
     path: "/app",
     element: <App />,
   },
+  {
+    path : "/guide",
+    element : <GuidePage />
+  }
 ]);
 
 const rootElement = document.getElementById("root");
